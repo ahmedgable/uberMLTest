@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Car Price Predictor</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>🚗 Car Price Predictor</h1>
+
+        <p>
+            AI-powered used car price prediction
+            using ExtraTreesRegressor
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>Car Information</h2>
+
+
+        <form id="predictionForm">
+
+
+            <div class="grid">
+
+
+                <!-- Manufacturer -->
+
+                <div class="form-group">
+
+                    <label>Manufacturer</label>
+
+                    <select id="Manufacturer" required>
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Model -->
+
+                <div class="form-group">
+
+                    <label>Model</label>
+
+                    <select id="Model" required>
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Category -->
+
+                <div class="form-group">
+
+                    <label>Category</label>
+
+                    <select id="Category" required>
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Fuel -->
+
+                <div class="form-group">
+
+                    <label>Fuel Type</label>
+
+                    <select id="Fuel type" required>
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Color -->
+
+                <div class="form-group">
+
+                    <label>Color</label>
+
+                    <select id="Color" required>
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Engine -->
+
+                <div class="form-group">
+
+                    <label>Engine Volume</label>
+
+                    <input
+                        type="number"
+                        id="Engine volume"
+                        step="0.1"
+                        min="0"
+                        placeholder="Example: 2.0"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Mileage -->
+
+                <div class="form-group">
+
+                    <label>Mileage</label>
+
+                    <input
+                        type="number"
+                        id="Mileage"
+                        min="0"
+                        placeholder="Example: 50000"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Cylinders -->
+
+                <div class="form-group">
+
+                    <label>Cylinders</label>
+
+                    <input
+                        type="number"
+                        id="Cylinders"
+                        min="1"
+                        placeholder="Example: 4"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Age -->
+
+                <div class="form-group">
+
+                    <label>Car Age</label>
+
+                    <input
+                        type="number"
+                        id="age"
+                        min="0"
+                        placeholder="Example: 5"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Leather -->
+
+                <div class="form-group">
+
+                    <label>Leather Interior</label>
+
+                    <select
+                        id="Leather interior"
+                        required
+                    >
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Wheel -->
+
+                <div class="form-group">
+
+                    <label>Wheel</label>
+
+                    <select id="Wheel" required>
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Gearbox -->
+
+                <div class="form-group">
+
+                    <label>Gear Box Type</label>
+
+                    <select
+                        id="Gear box type"
+                        required
+                    >
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Drive -->
+
+                <div class="form-group">
+
+                    <label>Drive Wheels</label>
+
+                    <select
+                        id="Drive wheels"
+                        required
+                    >
+
+                        <option value="">
+                            Loading...
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="predictButton"
+            >
+
+                🔮 Predict Car Price
+
+            </button>
+
+
+        </form>
+
+
+        <!-- Loading -->
+
+        <div
+            id="loading"
+            class="hidden"
+        >
+
+            <div class="spinner"></div>
+
+            <p>
+                AI is predicting the car price...
+            </p>
+
+        </div>
+
+
+        <!-- Error -->
+
+        <div
+            id="error"
+            class="error hidden"
+        ></div>
+
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div
+        id="result"
+        class="result-card hidden"
+    >
+
+        <h2>🎉 Prediction Result</h2>
+
+        <p>
+            Estimated Car Price
+        </p>
+
+        <div
+            id="predictedPrice"
+            class="price"
+        >
+
+            $0
+
+        </div>
+
+        <!-- Car Image -->
+
+        <div
+            id="carImageLoading"
+            class="car-image-loading hidden"
+        >
+
+            <div class="spinner"></div>
+
+            <p>
+                Loading car image...
+            </p>
+
+        </div>
+
+        <div
+            id="carImageWrapper"
+            class="car-image-wrapper hidden"
+        >
+
+            <img
+                id="carImage"
+                class="car-image"
+                src=""
+                alt="Car image"
+            >
+
+        </div>
+
+
+        <div class="result-info">
+
+            <p>
+                <strong>Manufacturer:</strong>
+
+                <span id="resultManufacturer"></span>
+            </p>
+
+
+            <p>
+                <strong>Model:</strong>
+
+                <span id="resultModel"></span>
+            </p>
+
+
+            <p>
+                <strong>Category:</strong>
+
+                <span id="resultCategory"></span>
+            </p>
+
+
+            <p>
+                <strong>Fuel:</strong>
+
+                <span id="resultFuel"></span>
+            </p>
+
+
+            <p>
+                <strong>Engine:</strong>
+
+                <span id="resultEngine"></span>
+            </p>
+
+
+            <p>
+                <strong>Mileage:</strong>
+
+                <span id="resultMileage"></span>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
+
+</body>
+
+</html>
